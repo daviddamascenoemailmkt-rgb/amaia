@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-gov-50: #eef2ff;
+  --color-gov-100: #dce4ff;
+  --color-gov-500: #2a45cf;
+  --color-gov-600: #1b34b8;
+  --color-gov-700: #142a99;
+  --color-gov-900: #0d1b5e;
+
+  --color-sucesso-50: #ecfdf5;
+  --color-sucesso-500: #059669;
+  --color-sucesso-600: #047857;
+
+  --color-tela: #f1f3f9;
+  --color-tinta: #14213d;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-tela);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+  overscroll-behavior-y: none;
+  /* Respeita o notch e a barra de gestos do iPhone. */
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Alvos de toque nunca abaixo de 44px, a régua do iOS. */
+button,
+a[role="button"] {
+  min-height: 44px;
+}
+
+@keyframes entrar-bolha {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bolha-entra {
+  animation: entrar-bolha 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pulsar-ponto {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+.ponto-digitando {
+  animation: pulsar-ponto 1.2s infinite;
+}
+
+@keyframes brilho {
+  0% { box-shadow: 0 0 0 0 rgb(5 150 105 / 0.45); }
+  70% { box-shadow: 0 0 0 14px rgb(5 150 105 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(5 150 105 / 0); }
+}
+
+.botao-pulsa {
+  animation: brilho 2.2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bolha-entra,
+  .ponto-digitando,
+  .botao-pulsa {
+    animation: none;
+  }
 }
