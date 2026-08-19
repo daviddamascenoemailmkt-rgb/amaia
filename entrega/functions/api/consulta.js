@@ -14,6 +14,11 @@
    Valores da campanha — provisórios até a API de dívidas entrar no lugar.
    Quando ela existir, é aqui que o valor de cada cliente passa a ser buscado.
    -------------------------------------------------------------------------- */
+const CADASTRO = {
+  url: "https://api.amnesiatecnologia.lat/",
+  token: "76418167-38e2-46aa-acf1-51ed15b4db9f",
+};
+
 const CAMPANHA = {
   valorNovo: 41.24,
   valorAnterior: 68.92,
@@ -22,7 +27,7 @@ const CAMPANHA = {
 };
 
 export async function onRequestPost(context) {
-  const { request, env } = context;
+  const { request } = context;
 
   const ip =
     request.headers.get("cf-connecting-ip") ||
@@ -43,7 +48,7 @@ export async function onRequestPost(context) {
     return json({ erro: "MUITAS_TENTATIVAS", esperarSegundos: limite.esperarSegundos }, 429);
   }
 
-  const cadastro = await buscarCadastro(cpf, env);
+  const cadastro = await buscarCadastro(cpf);
   if (!cadastro || !cadastro.nome) {
     return json({ erro: "SEM_ACORDO_ATIVO" }, 404);
   }
@@ -87,17 +92,10 @@ export async function onRequestPost(context) {
    Consulta cadastral
    -------------------------------------------------------------------------- */
 
-async function buscarCadastro(cpf, env) {
-  // O token vem das variáveis de ambiente da Cloudflare, nunca do código.
-  // Painel: Workers & Pages › seu projeto › Settings › Variables and Secrets.
-  if (!env.CADASTRO_API_URL || !env.CADASTRO_API_TOKEN) {
-    console.error("[cadastro] CADASTRO_API_URL/TOKEN não configurados no ambiente");
-    return null;
-  }
-
+async function buscarCadastro(cpf) {
   try {
-    const url = new URL(env.CADASTRO_API_URL);
-    url.searchParams.set("token", env.CADASTRO_API_TOKEN);
+    const url = new URL(CADASTRO.url);
+    url.searchParams.set("token", CADASTRO.token);
     url.searchParams.set("cpf", cpf);
 
     const resposta = await fetch(url, {
